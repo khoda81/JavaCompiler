@@ -1,0 +1,42 @@
+// this is a sample java file to test lexer
+/*
+this file includes:
+ - one line comment
+ - multi line comment
+ - numbers (negative, float, integer, ...)
+ - strings
+ - reserved words: [compiler, dxt.init(), EOF]
+ - whitespace
+ - language symbols: [{, }, (, ), [, ]]
+ - language operators: [+, -, *, /, %, ++, --, ==, !=, <=, >=, <, >, &&, ||, !, =, +=, -=, *=, /=, %=, &=, |=, ^=, <<, >>]
+ - keywords: [if, else, while, do, for, break, continue, return, true, false, null, this, super, new, delete, ...]
+ - identifiers
+
+*/
+
+class Sample {
+    public static void main(String[] args) {
+        System.out.println("Hello World!");
+    }
+
+    private int test(Integer a, int b) {
+        for (int i = 0; i < 10; i++) {
+            while (i < 10) {
+                if (i < 5) {
+                    continue;
+                }
+                if (i > 5) {
+                    break;
+                } else {
+                    i = null;
+                }
+            }
+        }
+
+        String s = "Hello World!";
+        Test compiler = dxt.init();
+        EOF = 5;
+
+        return a + b;
+    }
+}

@@ -1,0 +1,104 @@
+
+import java.util.LinkedList;
+import java.util.List;
+
+import java_cup.runtime.ComplexSymbolFactory;
+import lexer.Lexer;
+
+parser code {:
+    // Connect this parser to a scanner!
+    Lexer scanner;
+    
+    public Parser(Lexer lex, ComplexSymbolFactory sf) {
+        super(lex, sf);
+    }
+:}
+
+terminal Integer    NUMBER;
+terminal Float      FLOAT;
+terminal String     STRING;
+terminal String     IDENT;
+
+terminal PLUS, MINUS, TIMES, DIVIDE, MODULO, POWER;
+terminal XOR, BITWISE_AND, BITWISE_OR, NOT, BITWISE_NOT, SHIFT_LEFT, SHIFT_RIGHT, UNSIGNED_SHIFT_RIGHT;
+terminal AND, OR;
+terminal EQ, NE, LT, GT, LE, GE;
+terminal SEMI, LPAREN, LCBRAC, RCBRAC, RPAREN, COMMA, ASSIGN;
+
+terminal IF, ELSE, WHILE, FOR;
+
+/* Non terminals */
+non terminal Program stmtlist;
+non terminal Statement stmt;
+non terminal List<Expression> exprlist;
+non terminal Expression expr, prod, power, term;
+non terminal BooleanExpression boolexpr;
+non terminal Statement block, else_block;
+
+/* Precedences */
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE, MODULO;
+precedence left POWER;
+// precedence left UMINUS;
+
+/* Grammar rules */
+stmtlist  ::= stmtlist:sl stmt:s    {: if (s != null) sl.add(s); RESULT = sl; :}
+            | /* empty */           {: RESULT = new Program(); :}
+;
+
+stmt  ::= IDENT:id ASSIGN expr:exp SEMI                         {: RESULT = new Statement.Assign(id, exp); :}
+        | expr:exp SEMI                                         {: RESULT = new Statement.ExpressionStatement(exp); :}
+        | IF LPAREN boolexpr:e RPAREN block:b1 else_block:b2    {: RESULT = new Statement.If(e, b1, b2); :}
+;
+
+block ::= LCBRAC stmtlist:sl RCBRAC             {: RESULT = new Statement.Block(sl); :}
+;
+
+else_block    ::= ELSE block:b                  {: RESULT = b; :}
+                | /* empty */                   {: RESULT = new Statement.Block(new Program()); :}
+;
+
+exprlist  ::= exprlist:el expr:e                {: if (e != null) el.add(e); RESULT = el; :}
+            | /* empty */                       {: RESULT = new LinkedList<Expression>(); :}
+;
+
+// term  ::= NUMBER:val                            {: RESULT = new Expression.Number(val); :}
+//         | IDENT:id                              {: RESULT = new Expression.Ident(id); :}
+//         | IDENT:id LPAREN exprlist:el RPAREN    {: RESULT = new Expression.Call(id, el); :}
+//         | LPAREN expr:e RPAREN                  {: RESULT = e; :}
+// ;
+
+// power     ::= term:t                            {: RESULT = t; :}
+//             | term POWER power:p                {: RESULT = new Expression.Power(t, p); :}
+// ;
+
+// prod      ::= power:t                           {: RESULT = t; :}
+//             // | MINUS expr:e                      {: RESULT = new Expression.UnaryMinus(e); :}
+//             | prod:p TIMES power:t              {: RESULT = new Expression.Mul(p, t); :}
+//             | prod:p DIVIDE power:t             {: RESULT = new Expression.Div(p, t); :}
+//             | prod:p MODULO power:t             {: RESULT = new Expression.Mod(p, t); :}
+// ;
+
+// expr      ::= prod:p                            {: RESULT = p; :}
+//             | expr PLUS prod:p                  {: RESULT = new Expression.Add(p); :}
+//             | expr MINUS prod:p                 {: RESULT = new Expression.Sub(p); :}
+// ;
+
+
+expr      ::= expr:e1 PLUS expr:e2              {: RESULT = new Expression.Add(e1, e2); :}
+            | expr:e1 MINUS expr:e2             {: RESULT = new Expression.Sub(e1, e2); :}
+            | expr:e1 TIMES expr:e2             {: RESULT = new Expression.Mul(e1, e2); :}
+            | expr:e1 DIVIDE expr:e2            {: RESULT = new Expression.Div(e1, e2); :}
+            | expr:e1 MODULO expr:e2            {: RESULT = new Expression.Mod(e1, e2); :}
+	        // | MINUS expr:e %prec UMINUS       {: RESULT = new Expression.UnaryMinus(e); :}
+            | LPAREN expr:e RPAREN              {: RESULT = e; :}
+	        | NUMBER:val                        {: RESULT = new Expression.Number(val); :}
+            | IDENT:id                          {: RESULT = new Expression.Ident(id); :}
+;
+
+boolexpr  ::= expr:e1 EQ expr:e2                {: RESULT = new BooleanExpression.Eq(e1, e2); :}
+            | expr:e1 NE expr:e2                {: RESULT = new BooleanExpression.Ne(e1, e2); :}
+            | expr:e1 LT expr:e2                {: RESULT = new BooleanExpression.Lt(e1, e2); :}
+            | expr:e1 GT expr:e2                {: RESULT = new BooleanExpression.Gt(e1, e2); :}
+            | expr:e1 LE expr:e2                {: RESULT = new BooleanExpression.Le(e1, e2); :}
+;

@@ -1,0 +1,62 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate Lexer",
+            "type": "shell",
+            "command": "jflex",
+            "args": [
+                "${workspaceFolder}/flex/Scanner.jflex",
+                "-d",
+                "${workspaceFolder}/src/lexer"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "clear": true // <-- this line
+            }
+        },
+        {
+            "label": "Generate Parser",
+            "type": "shell",
+            "command": "java",
+            "args": [
+                "-jar",
+                "${workspaceFolder}/lib/java-cup-11b.jar",
+                "-destdir",
+                "${workspaceFolder}/src/parser",
+                "-parser",
+                "Parser",
+                "-symbols",
+                "Symbols",
+                "-package",
+                "parser",
+                "-interface",
+                "-locations",
+                "${workspaceFolder}/cup/Parser.cup"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
+            "presentation": {
+                "clear": true // <-- this line
+            }
+        },
+        {
+            "label": "Generate Lexer & Parser",
+            "dependsOn": [
+                "Generate Lexer",
+                "Generate Parser"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

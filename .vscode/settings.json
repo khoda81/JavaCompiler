@@ -1,0 +1,14 @@
+{
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar"
+        ],
+        "exclude": [
+            "lib/java-cup-11b.jar"
+        ]
+    },
+    "java.debug.settings.onBuildFailureProceed": true
+}
