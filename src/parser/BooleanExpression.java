@@ -1,10 +1,8 @@
 package parser;
 
-import java.util.HashMap;
-
 public abstract class BooleanExpression {
 
-    public abstract Boolean eval(HashMap<String, Object> locals);
+    public abstract Boolean eval(Scope locals);
 
     public static class Not extends BooleanExpression {
         public BooleanExpression expr;
@@ -14,7 +12,7 @@ public abstract class BooleanExpression {
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
+        public Boolean eval(Scope locals) {
             return !expr.eval(locals);
         }
     }
@@ -35,7 +33,7 @@ public abstract class BooleanExpression {
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
+        public Boolean eval(Scope locals) {
             return left.eval(locals) == right.eval(locals);
         }
     }
@@ -46,7 +44,7 @@ public abstract class BooleanExpression {
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
+        public Boolean eval(Scope locals) {
             return left.eval(locals) != right.eval(locals);
         }
     }
@@ -57,19 +55,14 @@ public abstract class BooleanExpression {
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
-            return left.eval(locals) < right.eval(locals);
+        public Boolean eval(Scope locals) {
+            return (Integer) left.eval(locals).value < (Integer) right.eval(locals).value;
         }
     }
 
-    public static class Gt extends Comparison {
+    public static class Gt extends Lt {
         public Gt(Expression left, Expression right) {
-            super(left, right);
-        }
-
-        @Override
-        public Boolean eval(HashMap<String, Object> locals) {
-            return left.eval(locals) > right.eval(locals);
+            super(right, left);
         }
     }
 
@@ -79,19 +72,14 @@ public abstract class BooleanExpression {
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
-            return left.eval(locals) <= right.eval(locals);
+        public Boolean eval(Scope locals) {
+            return (Integer) left.eval(locals).value <= (Integer) right.eval(locals).value;
         }
     }
 
-    public static class Ge extends Comparison {
+    public static class Ge extends Le {
         public Ge(Expression left, Expression right) {
-            super(left, right);
-        }
-
-        @Override
-        public Boolean eval(HashMap<String, Object> locals) {
-            return left.eval(locals) >= right.eval(locals);
+            super(right, left);
         }
     }
 
@@ -111,7 +99,7 @@ public abstract class BooleanExpression {
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
+        public Boolean eval(Scope locals) {
             return left.eval(locals) && right.eval(locals);
         }
     }
@@ -122,21 +110,35 @@ public abstract class BooleanExpression {
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
+        public Boolean eval(Scope locals) {
             return left.eval(locals) || right.eval(locals);
         }
     }
 
-    public static class Literal extends BooleanExpression {
+    public static class Expr extends BooleanExpression {
         public Expression expr;
 
-        public Literal(Expression expr) {
+        public Expr(Expression expr) {
             this.expr = expr;
         }
 
         @Override
-        public Boolean eval(HashMap<String, Object> locals) {
-            return expr.eval(locals) != 0;
+        public Boolean eval(Scope locals) {
+            return (Integer) expr.eval(locals).value != 0;
+        }
+    }
+
+    public static class True extends Expr {
+
+        public True() {
+            super(new Expression.Number(1));
+        }
+    }
+
+    public static class False extends Expr {
+
+        public False() {
+            super(new Expression.Number(0));
         }
     }
 }

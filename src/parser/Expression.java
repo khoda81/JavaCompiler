@@ -1,13 +1,12 @@
 package parser;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public abstract class Expression {
 
-    public abstract Integer eval(HashMap<String, Object> locals);
+    public abstract MyObject eval(Scope locals);
 
     public static class Number extends Expression {
         public Integer val;
@@ -17,8 +16,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return val;
+        public MyObject eval(Scope locals) {
+            return new MyObject(val);
         }
     }
 
@@ -30,9 +29,9 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
+        public MyObject eval(Scope locals) {
             try {
-                return (Integer) locals.get(id);
+                return locals.get(id);
             } catch (ClassCastException e) {
                 throw new RuntimeException("Identifier " + id + " is not an integer");
             }
@@ -50,29 +49,39 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            List<Integer> values = expr_list
+        public MyObject eval(Scope scope) {
+            List<MyObject> arguments = expr_list
                     .stream()
-                    .map(expr -> expr.eval(locals))
+                    .map(expr -> expr.eval(scope))
                     .collect(Collectors.toList());
 
             switch (id) {
-                case "print":
-                    for (Integer value : values)
-                        System.out.println(value);
-
+                case "print" -> {
+                    for (MyObject argument : arguments)
+                        System.out.println(argument.value);
                     return null;
+                }
+                case "input" -> {
+                    try (Scanner scanner = new Scanner(System.in)) {
+                        return new MyObject(scanner.nextInt());
+                    }
+                }
+                case "random" -> {
+                    // pick a random number from start..end (exclusive)
+                    assert arguments.size() == 2;
 
-                case "input":
-                    Scanner scanner = new Scanner(System.in); // System.in is a standard input stream
-                    return scanner.nextInt();
+                    Integer start = (Integer) arguments.get(0).value;
+                    Integer end = (Integer) arguments.get(1).value;
 
-                default:
-                    // TODO: run subroutine
-                    break;
+                    assert end > start;
+
+                    return new MyObject(start + (int) (Math.random() * (end - start)));
+                }
+                default -> {
+                    Subprogram subprogram = (Subprogram) scope.get(id).value;
+                    return subprogram.run(arguments, scope);
+                }
             }
-
-            return null;
         }
     }
 
@@ -84,8 +93,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return -expr.eval(locals);
+        public MyObject eval(Scope locals) {
+            return new MyObject(-(Integer) expr.eval(locals).value);
         }
     }
 
@@ -106,8 +115,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return left.eval(locals) + right.eval(locals);
+        public MyObject eval(Scope locals) {
+            return new MyObject((Integer) left.eval(locals).value + (Integer) right.eval(locals).value);
         }
     }
 
@@ -117,8 +126,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return left.eval(locals) - right.eval(locals);
+        public MyObject eval(Scope locals) {
+            return new MyObject((Integer) left.eval(locals).value - (Integer) right.eval(locals).value);
         }
     }
 
@@ -128,8 +137,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return left.eval(locals) * right.eval(locals);
+        public MyObject eval(Scope locals) {
+            return new MyObject((Integer) left.eval(locals).value * (Integer) right.eval(locals).value);
         }
     }
 
@@ -139,8 +148,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return left.eval(locals) / right.eval(locals);
+        public MyObject eval(Scope locals) {
+            return new MyObject((Integer) left.eval(locals).value / (Integer) right.eval(locals).value);
         }
     }
 
@@ -150,8 +159,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return left.eval(locals) % right.eval(locals);
+        public MyObject eval(Scope locals) {
+            return new MyObject((Integer) left.eval(locals).value % (Integer) right.eval(locals).value);
         }
     }
 
@@ -161,8 +170,8 @@ public abstract class Expression {
         }
 
         @Override
-        public Integer eval(HashMap<String, Object> locals) {
-            return (int) Math.pow(left.eval(locals), right.eval(locals));
+        public MyObject eval(Scope locals) {
+            return new MyObject((Integer) left.eval(locals).value ^ (Integer) right.eval(locals).value);
         }
     }
 }

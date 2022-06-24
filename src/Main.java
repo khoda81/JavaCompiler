@@ -47,6 +47,7 @@ class Main implements Callable<Integer> {
                     Parser parser = new Parser(scanner, csf);
                     Program program = (Program) parser.parse().value;
                     program.execute();
+
                 } else {
                     System.out.printf("%-15s %-15s %4s:%s\n", "Type", "Value", "line", "column");
                     Symbol token = scanner.next_token();

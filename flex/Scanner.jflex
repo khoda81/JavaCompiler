@@ -76,14 +76,22 @@ Comment = "//" [^\r\n]* | "/*" [^*] ~"*/" | "/*" "*"+ "/"
 "if"            { return symbol(IF); }
 "else"          { return symbol(ELSE); }
 "while"         { return symbol(WHILE); }
+"for"           { return symbol(FOR); }
+"func"          { return symbol(FUNC); }
+"return"        { return symbol(RETURN); }
+
+"true"          { return symbol(TRUE); }
+"false"         { return symbol(FALSE); }
 
 {Number}        { return symbol(NUMBER, Integer.parseInt(yytext())); }
 {Identifier}    { return symbol(IDENT, yytext()); }
+
 "+"             { return symbol(PLUS); }
 "-"             { return symbol(MINUS); }
 "*"             { return symbol(TIMES); }
 "/"             { return symbol(DIVIDE); }
 "%"             { return symbol(MODULO); }
+"**"            { return symbol(POWER); }
 
 "^"             { return symbol(XOR); }
 "&"             { return symbol(BITWISE_AND); }
