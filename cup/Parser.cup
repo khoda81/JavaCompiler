@@ -52,13 +52,17 @@ stmtlist  ::= stmtlist:sl stmt:s        {: if (s != null) sl.add(s); RESULT = sl
 
 stmt  ::= IDENT:id ASSIGN expr:exp SEMI {: RESULT = new Statement.Assign(id, exp); :}
         | expr:exp SEMI                 {: RESULT = new Statement.ExpressionStatement(exp); :}
+
         | IF
           LPAREN boolexpr:e RPAREN
           block:b1 else_block:b2        {: RESULT = new Statement.If(e, b1, b2); :}
+
         | FUNC IDENT:id
           LPAREN idlist:il RPAREN
           block:b                       {: RESULT = new Statement.Function(id, il, b); :}
+
         | RETURN expr:e SEMI            {: RESULT = new Statement.Return(e); :}
+
         | WHILE LPAREN boolexpr:e RPAREN
           block:b                       {: RESULT = new Statement.While(e, b); :}
 ;

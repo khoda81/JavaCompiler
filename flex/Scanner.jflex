@@ -20,23 +20,7 @@ WS = [ \t\n\r]+
 
 Number = \d+
 String = \"((\\.|[^\"\r\n])*)\" | \'((\\.|[^\'\r\n])*)\'
-
-// Symbol = [\[\]\(\)\{\}\,\;\?\:\.\@\#\$\`]
-// Keyword = (
-//     "abstract" | "assert" | "boolean" | "break" | "byte" |
-//     "case" | "catch" | "char" | "class" | "const" | "continue" |
-//     "default" | "do" | "double" | "else" | "enum" | "extends" |
-//     "final" | "finally" | "float" | "for" | "goto" | "if" |
-//     "implements" | "import" | "instanceof" | "int" | "interface" |
-//     "long" | "native" | "new" | "package" | "private" | "protected" |
-//     "public" | "return" | "short" | "static" | "strictfp" |
-//     "super" | "switch" | "synchronized" | "this" | "throw" |
-//     "throws" | "transient" | "try" | "void" | "volatile" | "while"
-// )
-
 Identifier = [a-zA-Z_] [a-zA-Z_0-9]*
-
-// AssignmentOperator = "=" | "+=" | "-=" | "*=" | "/=" | "&=" | "|=" | "^=" | "%=" | "<<=" | ">>=" | ">>>=" | "++" | "--"
 
 Comment = "//" [^\r\n]* | "/*" [^*] ~"*/" | "/*" "*"+ "/"
 

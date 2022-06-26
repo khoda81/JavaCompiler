@@ -12,8 +12,9 @@
             "preLaunchTask": "Generate Lexer & Parser",
             "args": [
                 "--parse",
-                "--debug",
-                "${workspaceFolder}/test_files/sample.txt",
+                // "--debug",
+                // "--help",
+                // "${workspaceFolder}/test_files/sample.txt",
                 "${workspaceFolder}/test_files/expression.txt"
             ],
         }

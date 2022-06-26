@@ -1,17 +1,16 @@
 
-
-a = 5;
-print(a);
-
-x = 7;
-print(2);
-print(x);
-
-y = -5 -4;
-
-if (y > 0) {
-    print(1);
+func fib(n) {
+    if (n <= 1) {
+        return 1;
+    }
+    else {
+        return fib(n-1) + fib(n-2);
+    }
 }
-else {
-    print(2);
+
+
+i = 0;
+while (i < 10) {
+    print(fib(i));
+    i = i + 1;
 }
