@@ -11,10 +11,10 @@
             "mainClass": "Main",
             "preLaunchTask": "Generate Lexer & Parser",
             "args": [
-                "--parse",
+                // "--parse",
                 // "--debug",
                 // "--help",
-                // "${workspaceFolder}/test_files/sample.txt",
+                "${workspaceFolder}/test_files/sample.txt",
                 "${workspaceFolder}/test_files/expression.txt"
             ],
         }
